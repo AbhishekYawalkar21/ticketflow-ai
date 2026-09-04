@@ -1,10 +1,10 @@
 # 🎫 TicketFlow AI - Intelligent Support Ticket Classification
 
-TicketFlow AI is an intelligent support ticket management system that classifies, prioritizes, and routes incoming tickets using a local LLM — achieving a 70% automation rate with no external APIs or subscription costs. It ingests tickets via email (IMAP/SMTP) or API, runs them through AI-powered classification, multilingual (German & English) language handling, and automatic sentiment detection, then surfaces the results on a real-time analytics dashboard. Built on an async Celery task queue with WebSocket-based live updates, the entire system — including the Mistral 7B classification model — runs on local infrastructure via Ollama, so no ticket data ever leaves your servers.
+TicketFlow AI is an intelligent support ticket management system that classifies, prioritizes, and routes incoming tickets using a local LLM — achieving a 70% automation rate with no external APIs. It ingests tickets via email (IMAP/SMTP) or API, runs them through AI-powered classification, multilingual (German & English) language handling, and automatic sentiment detection, then surfaces the results on a real-time analytics dashboard. Built on an async Celery task queue with WebSocket-based live updates, the entire system — including the Mistral 7B classification model — runs on local infrastructure via Ollama, so no ticket data ever leaves your servers.
 
 ## 🚀 Key Features
 
-- 🤖 **AI-Powered Classification** — automatic ticket categorization using a local Ollama LLM, no external APIs required
+- 🤖 **AI-Powered Classification** — automatic ticket categorization using a local Ollama LLM
 - 🌍 **Multilingual Support** — handles German and English ticket processing out of the box
 - 😊 **Sentiment Analysis** — automatic detection of customer sentiment on every incoming ticket
 - ⚡ **Real-time Updates** — WebSocket-based live dashboard reflects ticket status instantly
@@ -75,7 +75,7 @@ cd ticketflow-ai
 ```
 
 ### Option A — Docker (recommended, fastest)
-Requires only Docker Desktop (4GB+ RAM, 15GB+ disk space) — no local Python, Node.js, PostgreSQL, Redis, or Ollama install needed; everything runs in containers.
+Requires only Docker Desktop — no local Python, Node.js, PostgreSQL, Redis, or Ollama install needed; everything runs in containers.
 
 ```bash
 docker-compose up -d
