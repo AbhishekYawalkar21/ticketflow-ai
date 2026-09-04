@@ -10,7 +10,7 @@ from app.schemas import (
 )
 from datetime import datetime
 
-router = APIRouter(prefix="/api/v1/tickets", tags=["tickets"])
+router = APIRouter()
 
 @router.post("", response_model=TicketResponse, status_code=201)
 async def create_ticket(

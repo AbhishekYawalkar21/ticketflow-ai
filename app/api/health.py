@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/health", tags=["health"])
+router = APIRouter()
 
 @router.get("/")
 async def health_check(db: AsyncSession = Depends(get_db)):

@@ -7,7 +7,7 @@ from app.models import Ticket, Classification
 from app.schemas import ClassificationSchema
 from app.tasks import classify_ticket_async
 
-router = APIRouter(prefix="/api/v1/classifications", tags=["classifications"])
+router = APIRouter()
 
 @router.post("/{ticket_id}/classify")
 async def trigger_classification(

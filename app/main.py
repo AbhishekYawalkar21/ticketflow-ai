@@ -140,7 +140,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         manager.disconnect(client_id)
 
 # Include API routes
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api/v1")
 
 # Root endpoint
 @app.get("/")

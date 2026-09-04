@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
+// Ensure /api/v1 is always attached
+const BASE_HOST = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE = BASE_HOST.endsWith('/api/v1') ? BASE_HOST : `${BASE_HOST}/api/v1`;
 
 const client = axios.create({
   baseURL: API_BASE,
@@ -19,7 +21,7 @@ export const api = {
   },
 
   createTicket: async (data) => {
-    const response = await client.post('/tickets', data);
+    const response = await client.post('/tickets/', data);
     return response.data;
   },
 

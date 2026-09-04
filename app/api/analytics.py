@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.database import get_db
 from app.models import Ticket, AnalyticsMetric
 from app.schemas import AnalyticsSchema
 
-router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
+router = APIRouter()
 
 @router.get("/metrics")
 async def get_metrics(
@@ -14,7 +14,8 @@ async def get_metrics(
     db: AsyncSession = Depends(get_db)
 ):
     """Get analytics metrics for last N days"""
-    date_from = datetime.utcnow() - timedelta(days=days)
+    # Use timezone-aware UTC datetime to align with PostgreSQL TIMESTAMPTZ
+    date_from = datetime.now(timezone.utc) - timedelta(days=days)
     
     # Total tickets
     total_result = await db.execute(
@@ -22,11 +23,12 @@ async def get_metrics(
     )
     total_tickets = total_result.scalar() or 0
     
-    # Automated tickets
+    # Automated tickets (handles both float 0.70 and integer 70 scales, excludes NULL)
     automated_result = await db.execute(
         select(func.count(Ticket.id)).where(
             (Ticket.created_at >= date_from) &
-            (Ticket.automation_score >= 70)
+            (Ticket.automation_score.isnot(None)) &
+            ((Ticket.automation_score >= 0.70) | (Ticket.automation_score >= 70))
         )
     )
     automated_count = automated_result.scalar() or 0
@@ -46,7 +48,8 @@ async def get_metrics(
             (Ticket.resolved_at.isnot(None))
         )
     )
-    avg_resolution_time = (resolution_result.scalar() or 0) / 60
+    avg_res_raw = resolution_result.scalar() or 0
+    avg_resolution_time = avg_res_raw / 60
     
     automation_rate = (automated_count / total_tickets * 100) if total_tickets > 0 else 0
     

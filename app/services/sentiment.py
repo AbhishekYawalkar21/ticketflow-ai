@@ -1,6 +1,5 @@
-from textblob import TextBlob
-from typing import float
 import logging
+from textblob import TextBlob
 
 logger = logging.getLogger(__name__)
 

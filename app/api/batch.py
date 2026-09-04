@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/batch", tags=["batch"])
+router = APIRouter()
 
 @router.post("/classify")
 async def batch_classify(

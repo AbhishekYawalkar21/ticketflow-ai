@@ -13,6 +13,7 @@ export default function Dashboard({ tickets }) {
     setLoading(true);
     try {
       const response = await api.getMetrics();
+      console.log('Metrics API Response:', response); // Debug inspect response keys
       setMetrics(response);
     } catch (error) {
       console.error('Failed to fetch metrics:', error);
@@ -22,11 +23,17 @@ export default function Dashboard({ tickets }) {
 
   if (loading) return <div style={{ padding: '20px' }}>Loading...</div>;
 
+  // Safe extraction supporting both snake_case and camelCase keys
+  const total = metrics?.total_tickets ?? metrics?.totalTickets ?? tickets?.length ?? 0;
+  const automated = metrics?.automated_count ?? metrics?.automatedTickets ?? metrics?.automated ?? 0;
+  const autoRate = metrics?.automation_rate ?? metrics?.automationRate ?? 0;
+  const avgResTime = metrics?.avg_resolution_time ?? metrics?.avgResolutionTime ?? 0;
+
   const stats = [
-    { label: 'Total Tickets', value: metrics?.total_tickets || 0, color: '#3498db' },
-    { label: 'Automated', value: metrics?.automated_count || 0, color: '#2ecc71' },
-    { label: 'Automation Rate', value: `${metrics?.automation_rate.toFixed(1) || 0}%`, color: '#f39c12' },
-    { label: 'Avg Resolution Time', value: `${metrics?.avg_resolution_time.toFixed(1) || 0}m`, color: '#e74c3c' },
+    { label: 'Total Tickets', value: total, color: '#3498db' },
+    { label: 'Automated', value: automated, color: '#2ecc71' },
+    { label: 'Automation Rate', value: `${Number(autoRate).toFixed(1)}%`, color: '#f39c12' },
+    { label: 'Avg Resolution Time', value: `${Number(avgResTime).toFixed(1)}m`, color: '#e74c3c' },
   ];
 
   return (
@@ -74,9 +81,9 @@ export default function Dashboard({ tickets }) {
             </tr>
           </thead>
           <tbody>
-            {tickets.slice(0, 5).map(ticket => (
+            {(tickets || []).slice(0, 5).map(ticket => (
               <tr key={ticket.id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: '10px' }}>{ticket.subject.substring(0, 40)}</td>
+                <td style={{ padding: '10px' }}>{ticket.subject?.substring(0, 40)}</td>
                 <td style={{ padding: '10px' }}>
                   <span style={{
                     padding: '4px 8px',
@@ -89,7 +96,7 @@ export default function Dashboard({ tickets }) {
                 </td>
                 <td style={{ padding: '10px' }}>{ticket.priority}</td>
                 <td style={{ padding: '10px' }}>{ticket.category || '-'}</td>
-                <td style={{ padding: '10px' }}>{ticket.automation_score.toFixed(0)}%</td>
+                <td style={{ padding: '10px' }}>{(ticket.automation_score || 0).toFixed(0)}%</td>
               </tr>
             ))}
           </tbody>
