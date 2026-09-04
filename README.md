@@ -1,6 +1,6 @@
 # 🎫 TicketFlow AI - Intelligent Support Ticket Classification
 
-TicketFlow AI is an intelligent support ticket management system that classifies, prioritizes, and routes incoming tickets using a local LLM — achieving a 70% automation rate with no external APIs. It ingests tickets via email (IMAP/SMTP) or API, runs them through AI-powered classification, multilingual (German & English) language handling, and automatic sentiment detection, then surfaces the results on a real-time analytics dashboard. Built on an async Celery task queue with WebSocket-based live updates, the entire system — including the Mistral 7B classification model — runs on local infrastructure via Ollama, so no ticket data ever leaves your servers.
+TicketFlow AI is an intelligent support ticket management system that classifies, prioritizes, and routes incoming tickets using a local LLM — achieving a 70% automation rate with no external APIs or subscription costs. It ingests tickets via email (IMAP/SMTP) or API, runs them through AI-powered classification, multilingual (German & English) language handling, and automatic sentiment detection, then surfaces the results on a real-time analytics dashboard. Built on an async Celery task queue with WebSocket-based live updates, the entire system — including the Mistral 7B classification model — runs on local infrastructure via Ollama, so no ticket data ever leaves your servers.
 
 ## 🚀 Key Features
 
@@ -66,6 +66,66 @@ Analytics Dashboard (React)
 ```
 
 Each classification runs as an independent async task, so the pipeline stays responsive under load and new processing steps can be added without touching the ingestion or dashboard layers.
+
+## ⚙️ Getting Started
+
+```
+git clone <this-repo-url>
+cd ticketflow-ai
+```
+
+### Option A — Docker (recommended, fastest)
+Requires only Docker Desktop (4GB+ RAM, 15GB+ disk space) — no local Python, Node.js, PostgreSQL, Redis, or Ollama install needed; everything runs in containers.
+
+```bash
+docker-compose up -d
+```
+
+On the first run, pull the classification model (10-15 minutes):
+```bash
+docker-compose exec ollama ollama pull mistral:7b
+```
+
+Then verify everything is up:
+```bash
+docker-compose ps
+curl http://localhost:8000/health
+```
+
+### Option B — Manual setup
+Requires Python 3.11+, Node.js, PostgreSQL, Redis, and [Ollama](https://ollama.ai/) installed and running locally with a pulled model (`ollama pull mistral:7b`).
+
+Configure environment:
+```bash
+cp .env.example .env       # then fill in your values
+```
+
+Backend:
+```bash
+cd app
+python -m venv venv
+
+# Windows
+venv\Scripts\Activate.ps1
+
+# Mac/Linux
+source venv/bin/activate
+
+pip install -r ../requirements.txt
+uvicorn app.main:app --reload
+```
+
+Celery worker (separate terminal):
+```bash
+celery -A app.tasks worker --loglevel=info
+```
+
+Frontend:
+```bash
+cd frontend
+npm install
+npm start
+```
 
 ## 🌍 Real-World Applications
 
